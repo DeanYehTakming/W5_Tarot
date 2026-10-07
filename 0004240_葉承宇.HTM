@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarot Insight｜塔羅洞察</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d0b1b;
+      --panel: rgba(255, 255, 255, 0.07);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --text: #f5f1ff;
+      --muted: #aaa3bd;
+      --gold: #e5c07b;
+      --purple: #8f7cff;
+      --card-bg: linear-gradient(145deg, #282041, #151125);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family:
+        -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "Noto Sans TC",
+        "PingFang TC", sans-serif;
+
+      background:
+        radial-gradient(circle at top, #292044 0%, #151126 35%, #090812 100%);
+      color: var(--text);
+
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(15px);
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--panel-border);
+      background: rgba(0, 0, 0, 0.25);
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--purple);
+    }
+
+    select option {
+      color: #111;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 22px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #8f7cff, #c07cff);
+      color: white;
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.09);
+      color: white;
+      border: 1px solid var(--panel-border);
+    }
+
+    .status {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status strong {
+      color: var(--gold);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+      margin-top: 25px;
+    }
+
+    .tarot-card {
+      min-height: 330px;
+      background: var(--card-bg);
+      border: 1px solid rgba(229, 192, 123, 0.35);
+      border-radius: 18px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      animation: reveal 0.6s ease both;
+    }
+
+    .tarot-card::before {
+      content: "✦";
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 70px;
+      color: rgba(255, 255, 255, 0.03);
+    }
+
+    .position {
+      color: var(--purple);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .card-number {
+      color: var(--gold);
+      font-size: 14px;
+      margin-top: 25px;
+    }
+
+    .card-icon {
+      font-size: 52px;
+      margin: 18px 0;
+    }
+
+    .card-name {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .card-en {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .orientation {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: rgba(143, 124, 255, 0.15);
+      color: #c9c0ff;
+    }
+
+    .meaning {
+      margin-top: 18px;
+      line-height: 1.7;
+      color: #ded9e8;
+    }
+
+    .narrative {
+      margin-top: 28px;
+      padding: 24px;
+      border-left: 3px solid var(--gold);
+      background: rgba(229, 192, 123, 0.06);
+      border-radius: 0 14px 14px 0;
+      line-height: 1.9;
+    }
+
+    .narrative h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: var(--gold);
+    }
+
+    .question-display {
+      color: #d9d1ff;
+      font-style: italic;
+      margin-bottom: 15px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 45px 20px;
+      color: var(--muted);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #777087;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="logo">☾ ✦ ☽</div>
+    <h1>Tarot Insight</h1>
+    <div class="subtitle">
+      塔羅不是替你決定未來，<br>
+      而是讓你從另一個角度，看見現在。
+    </div>
+  </header>
+
+  <section class="panel">
+
+    <label for="question">你現在最想問的是什麼？</label>
+
+    <input
+      id="question"
+      type="text"
+      placeholder="例如：我現在的職涯應該往哪個方向走？"
+    />
+
+    <div class="controls">
+
+      <div>
+        <label for="spread">牌陣</label>
+
+        <select id="spread">
+          <option value="1">單張牌｜今日洞察</option>
+          <option value="3">三張牌｜現況・挑戰・方向</option>
+        </select>
+      </div>
+
+      <div>
+        <label>牌組狀態</label>
+
+        <div class="status">
+          剩餘 <strong id="deckCount">22</strong> 張
+        </div>
+      </div>
+
+    </div>
+
+    <div class="buttons">
+      <button class="secondary" id="shuffleBtn">
+        🔀 洗牌
+      </button>
+
+      <button class="primary" id="drawBtn">
+        ✦ 抽牌
+      </button>
+
+      <button class="secondary" id="resetBtn">
+        ↻ 重置
+      </button>
+    </div>
+
+  </section>
+
+
+  <section class="panel">
+
+    <div id="result">
+
+      <div class="empty">
+        ✦<br><br>
+        靜下來想一個問題。<br>
+        然後，抽一張牌。
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <footer>
+    Tarot Insight Prototype<br>
+    本工具僅供娛樂、自我反思與探索使用，
+    不應取代醫療、法律、財務或其他專業建議。
+  </footer>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   1. Tarot Data
+   Major Arcana 22 Cards
+===================================================== */
+
+const originalDeck = [
+
+  {
+    number: 0,
+    name: "愚者",
+    en: "The Fool",
+    icon: "🌱",
+    upright: "新的開始、自由、冒險與可能性。",
+    reversed: "衝動、缺乏準備，或對未知有所恐懼。"
+  },
+
+  {
+    number: 1,
+    name: "魔術師",
+    en: "The Magician",
+    icon: "✨",
+    upright: "資源已經在手上，現在是把想法化為行動的時刻。",
+    reversed: "能力沒有被充分運用，或方向仍不夠聚焦。"
+  },
+
+  {
+    number: 2,
+    name: "女祭司",
+    en: "The High Priestess",
+    icon: "🌙",
+    upright: "直覺、觀察與內在智慧正在提醒你。",
+    reversed: "可能忽略自己的感受，或資訊仍然不完整。"
+  },
+
+  {
+    number: 3,
+    name: "皇后",
+    en: "The Empress",
+    icon: "🌸",
+    upright: "成長、創造、滋養，事情正逐漸成熟。",
+    reversed: "付出過多，需要重新照顧自己的需求。"
+  },
+
+  {
+    number: 4,
+    name: "皇帝",
+    en: "The Emperor",
+    icon: "👑",
+    upright: "建立結構、界線與穩定的秩序。",
+    reversed: "過度控制或僵化的規則可能限制發展。"
+  },
+
+  {
+    number: 5,
+    name: "教皇",
+    en: "The Hierophant",
+    icon: "📜",
+    upright: "學習既有經驗、制度與前人的智慧。",
+    reversed: "也許到了重新檢視傳統規則的時候。"
+  },
+
+  {
+    number: 6,
+    name: "戀人",
+    en: "The Lovers",
+    icon: "❤️",
+    upright: "價值觀、關係與重要選擇正在交會。",
+    reversed: "內在價值可能出現衝突，需要重新對齊。"
+  },
+
+  {
+    number: 7,
+    name: "戰車",
+    en: "The Chariot",
+    icon: "🏇",
+    upright: "意志、方向與行動力正在推動你前進。",
+    reversed: "速度很快，但可能需要確認方向是否正確。"
+  },
+
+  {
+    number: 8,
+    name: "力量",
+    en: "Strength",
+    icon: "🦁",
+    upright: "真正的力量來自耐心、自信與柔韌。",
+    reversed: "自我懷疑正在消耗你的力量。"
+  },
+
+  {
+    number: 9,
+    name: "隱者",
+    en: "The Hermit",
+    icon: "🏮",
+    upright: "暫時遠離喧囂，答案可能藏在深度思考裡。",
+    reversed: "過度孤立可能讓你失去外界的重要訊號。"
+  },
+
+  {
+    number: 10,
+    name: "命運之輪",
+    en: "Wheel of Fortune",
+    icon: "☸️",
+    upright: "變化正在發生，一個新的週期可能開始。",
+    reversed: "事情暫時不如預期，但週期仍會繼續轉動。"
+  },
+
+  {
+    number: 11,
+    name: "正義",
+    en: "Justice",
+    icon: "⚖️",
+    upright: "回到事實、責任與公平，重新衡量選擇。",
+    reversed: "可能存在偏見、資訊落差或尚未承擔的責任。"
+  },
+
+  {
+    number: 12,
+    name: "吊人",
+    en: "The Hanged Man",
+    icon: "🔄",
+    upright: "暫停不代表失敗，也可能是在等待新的視角。",
+    reversed: "停滯太久，可能需要決定是否繼續等待。"
+  },
+
+  {
+    number: 13,
+    name: "死神",
+    en: "Death",
+    icon: "🦋",
+    upright: "結束、轉化與重新開始。",
+    reversed: "對改變的抗拒，可能讓舊階段遲遲無法結束。"
+  },
+
+  {
+    number: 14,
+    name: "節制",
+    en: "Temperance",
+    icon: "💧",
+    upright: "整合、平衡與調整節奏。",
+    reversed: "失衡正在提醒你重新調整資源與步伐。"
+  },
+
+  {
+    number: 15,
+    name: "惡魔",
+    en: "The Devil",
+    icon: "⛓️",
+    upright: "留意執著、誘惑，以及那些看似無法掙脫的模式。",
+    reversed: "你開始看見束縛，也開始擁有離開它的可能。"
+  },
+
+  {
+    number: 16,
+    name: "高塔",
+    en: "The Tower",
+    icon: "⚡",
+    upright: "既有結構受到衝擊，但真相因此浮現。",
+    reversed: "改變可能已經開始，只是你仍試圖維持原狀。"
+  },
+
+  {
+    number: 17,
+    name: "星星",
+    en: "The Star",
+    icon: "⭐",
+    upright: "希望、療癒，以及重新相信未來。",
+    reversed: "希望仍在，只是暫時被疲憊遮住。"
+  },
+
+  {
+    number: 18,
+    name: "月亮",
+    en: "The Moon",
+    icon: "🌙",
+    upright: "資訊尚未完全清楚，直覺與不確定性同時存在。",
+    reversed: "迷霧開始散去，真相逐漸變得清晰。"
+  },
+
+  {
+    number: 19,
+    name: "太陽",
+    en: "The Sun",
+    icon: "☀️",
+    upright: "清晰、活力、成功與值得分享的喜悅。",
+    reversed: "成果可能稍有延遲，但方向仍然明亮。"
+  },
+
+  {
+    number: 20,
+    name: "審判",
+    en: "Judgement",
+    icon: "📯",
+    upright: "重新理解過去，並做出下一階段的重要決定。",
+    reversed: "可能仍受到過去的評價或自我懷疑影響。"
+  },
+
+  {
+    number: 21,
+    name: "世界",
+    en: "The World",
+    icon: "🌍",
+    upright: "完成、整合，一個階段正在形成完整的句點。",
+    reversed: "距離完成只差最後一步，需要把未竟之事收尾。"
+  }
+
+];
+
+
+/* =====================================================
+   2. Runtime State
+===================================================== */
+
+let deck = [];
+let lastDraw = [];
+
+
+/* =====================================================
+   3. Fisher-Yates Shuffle
+===================================================== */
+
+function shuffle(array) {
+
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [result[i], result[j]] =
+      [result[j], result[i]];
+
+  }
+
+  return result;
+}
+
+
+/* =====================================================
+   4. Reset Deck
+===================================================== */
+
+function resetDeck() {
+
+  deck = shuffle(originalDeck);
+
+  lastDraw = [];
+
+  updateDeckCount();
+
+}
+
+
+/* =====================================================
+   5. Draw Cards
+===================================================== */
+
+function drawCards(count) {
+
+  if (deck.length < count) {
+    resetDeck();
+  }
+
+  const cards = [];
+
+  for (let i = 0; i < count; i++) {
+
+    const card = deck.pop();
+
+    /*
+      約 30% 機率出現逆位。
+      可依需求調整。
+    */
+
+    card.orientation =
+      Math.random() < 0.30
+        ? "reversed"
+        : "upright";
+
+    cards.push(card);
+
+  }
+
+  lastDraw = cards;
+
+  updateDeckCount();
+
+  return cards;
+}
+
+
+/* =====================================================
+   6. Narrative Generator
+===================================================== */
+
+function generateNarrative(cards, question) {
+
+  if (cards.length === 1) {
+
+    const card = cards[0];
+
+    const meaning =
+      card.orientation === "upright"
+        ? card.upright
+        : card.reversed;
+
+    return `
+      這張牌把焦點放回「${card.name}」所代表的課題。
+      ${meaning}
+
+      它不是在替你預言一個固定的結果，
+      而是在提醒你重新看見目前的位置。
+
+      面對「${escapeHTML(question || "此刻的問題")}」，
+      也許真正值得思考的不是「事情一定會怎麼發展」，
+      而是：你現在能做出什麼選擇？
+    `;
+
+  }
+
+
+  const positions = [
+    "現況",
+    "挑戰",
+    "方向"
+  ];
+
+  const interpretations =
+    cards.map((card, index) => {
+
+      const meaning =
+        card.orientation === "upright"
+          ? card.upright
+          : card.reversed;
+
+      return `
+        <strong>${positions[index]}｜${card.name}</strong><br>
+        ${meaning}
+      `;
+
+    }).join("<br><br>");
+
+
+  return `
+    關於「${escapeHTML(question || "你現在正在思考的事情")}」，
+    三張牌形成了一條從現在走向下一步的路徑。
+
+    <br><br>
+
+    ${interpretations}
+
+    <br><br>
+
+    如果把三張牌放在一起看，
+    它們比較像是一張地圖，而不是一個已經寫好的答案。
+
+    <strong>
+      現況告訴你站在哪裡，
+      挑戰提醒你需要看見什麼，
+      而方向，則邀請你決定下一步怎麼走。
+    </strong>
+  `;
+
+}
+
+
+/* =====================================================
+   7. Render Cards
+===================================================== */
+
+function renderCards(cards, question) {
+
+  const result =
+    document.getElementById("result");
+
+  const positions =
+    cards.length === 3
+      ? ["現況", "挑戰", "方向"]
+      : ["今日洞察"];
+
+
+  const cardsHTML =
+    cards.map((card, index) => {
+
+      const reversed =
+        card.orientation === "reversed";
+
+      const meaning =
+        reversed
+          ? card.reversed
+          : card.upright;
+
+      return `
+
+        <article
+          class="tarot-card"
+          style="animation-delay:${index * 0.15}s"
+        >
+
+          <div class="position">
+            ${positions[index]}
+          </div>
+
+          <div class="card-number">
+            Major Arcana ${roman(card.number)}
+          </div>
+
+          <div class="card-icon">
+            ${card.icon}
+          </div>
+
+          <div class="card-name">
+            ${card.name}
+          </div>
+
+          <div class="card-en">
+            ${card.en}
+          </div>
+
+          <div class="orientation">
+            ${reversed ? "逆位 ↓" : "正位 ↑"}
+          </div>
+
+          <div class="meaning">
+            ${meaning}
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+
+  const narrative =
+    generateNarrative(cards, question);
+
+
+  result.innerHTML = `
+
+    ${
+      question
+        ? `<div class="question-display">
+             「${escapeHTML(question)}」
+           </div>`
+        : ""
+    }
+
+    <div class="cards">
+      ${cardsHTML}
+    </div>
+
+    <div class="narrative">
+
+      <h2>✦ Tarot Insight</h2>
+
+      ${narrative}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   8. UI Helpers
+===================================================== */
+
+function updateDeckCount() {
+
+  document.getElementById("deckCount")
+    .textContent = deck.length;
+
+}
+
+
+function roman(number) {
+
+  const values = [
+    "0", "I", "II", "III", "IV",
+    "V", "VI", "VII", "VIII", "IX",
+    "X", "XI", "XII", "XIII", "XIV",
+    "XV", "XVI", "XVII", "XVIII",
+    "XIX", "XX", "XXI"
+  ];
+
+  return values[number];
+
+}
+
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   9. Event Handlers
+===================================================== */
+
+document
+  .getElementById("shuffleBtn")
+  .addEventListener("click", () => {
+
+    deck = shuffle(deck);
+
+    document.getElementById("result")
+      .innerHTML = `
+
+        <div class="empty">
+          🔀<br><br>
+          牌已重新洗好。<br>
+          想著你的問題，準備好了就抽牌。
+        </div>
+
+      `;
+
+  });
+
+
+document
+  .getElementById("drawBtn")
+  .addEventListener("click", () => {
+
+    const question =
+      document
+        .getElementById("question")
+        .value
+        .trim();
+
+    const count =
+      Number(
+        document
+          .getElementById("spread")
+          .value
+      );
+
+    const cards =
+      drawCards(count);
+
+    renderCards(
+      cards,
+      question
+    );
+
+  });
+
+
+document
+  .getElementById("resetBtn")
+  .addEventListener("click", () => {
+
+    resetDeck();
+
+    document
+      .getElementById("question")
+      .value = "";
+
+    document
+      .getElementById("result")
+      .innerHTML = `
+
+        <div class="empty">
+          ✦<br><br>
+          牌組已重置。<br>
+          下一個問題，也可以是一段新的旅程。
+        </div>
+
+      `;
+
+  });
+
+
+/* Enter = Draw */
+
+document
+  .getElementById("question")
+  .addEventListener("keydown", event => {
+
+    if (event.key === "Enter") {
+
+      document
+        .getElementById("drawBtn")
+        .click();
+
+    }
+
+  });
+
+
+/* =====================================================
+   10. Initialize
+===================================================== */
+
+resetDeck();
+
+</script>
+
+</body>
+</html>
